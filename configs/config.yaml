@@ -1,0 +1,43 @@
+# ===============================
+# Scene / audio
+# ===============================
+fs: 24000
+scene_len_sec: 10.0
+scene_len: 240000   # fs * scene_len_sec
+
+min_sources: 3
+max_sources: 5
+
+max_overlap: 3
+max_tries: 2000
+
+min_event_dur_sec: 1.0
+max_event_dur_sec: 7.0
+
+rms_thresh: 1.0e-4
+min_angular_sep_deg: 30.0
+
+# ===============================
+# Dataset paths
+# ===============================
+speech_dir: "/path/to/speech_dataset"
+music_dir: "/path/to/music_dataset"
+sfx_dir: "/media/partha/LaCie/datasets/freesound_unverified"
+
+# ===============================
+# Dataset mode
+# Options: speech | music | sfx | all
+# ===============================
+dataset_mode: "sfx"
+
+# ===============================
+# Simulation scale
+# ===============================
+mixtures_per_room: 10
+n_rooms: 1
+
+# ===============================
+# Paths
+# ===============================
+rir_dir: "/media/partha/LaCie/simulated_rirs_test_hoa_order_3"
+out_dir: "hoa_out"
