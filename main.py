@@ -2,7 +2,7 @@ import os
 import yaml
 
 from datasets.freesound_dataset import FreesoundSFXDataset
-# from datasets.speech import SpeechDataset
+from datasets.speech_dataset import VctkSpeechDataset
 # from datasets.music import MusicDataset
 from renderer.simulate_per_room import simulate_per_room
 
@@ -22,7 +22,7 @@ def main(config):
         datasets["sfx"] = FreesoundSFXDataset(config["sfx_dir"])
     if mode in ["speech", "all"] and "speech_dir" in config:
         pass
-        #datasets["speech"] = SpeechDataset(config["speech_dir"])
+        datasets["speech"] = VctkSpeechDataset(config["speech_dir"])
     if mode in ["music", "all"] and "music_dir" in config:
         pass
         #datasets["music"] = MusicDataset(config["music_dir"])
