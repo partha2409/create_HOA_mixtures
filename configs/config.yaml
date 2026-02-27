@@ -1,12 +1,13 @@
 # ===============================
 # Scene / audio
 # ===============================
-fs: 24000
+fs: 24000 # don't change this, since RIRs are simulated at this sampling rate
 scene_len_sec: 10.0
 scene_len: 240000   # fs * scene_len_sec
 
 min_sources: 3
 max_sources: 5
+
 
 max_overlap: 3
 max_tries: 2000
@@ -17,13 +18,16 @@ max_event_dur_sec: 7.0
 rms_thresh: 1.0e-4
 min_angular_sep_deg: 30.0
 
+n_diffuse_sources: 1
+fg_to_diffuse_snr_db_range: [3, 20]  # SNR range for fg to diffuse sources (in dB)
+mixing_time_sec: 0.05  # diffuse sources will use RIRs from this time onwards to ensure no direct and early reflections are included
 # ===============================
 # Dataset paths
 # ===============================
 speech_dir: "/path/to/speech_dataset"
 music_dir: "/path/to/music_dataset"
 sfx_dir: "/media/partha/LaCie/datasets/freesound_unverified"
-
+background_dir: "/path/to/background_dataset"
 # ===============================
 # Dataset mode
 # Options: speech | music | sfx | all
@@ -33,6 +37,7 @@ dataset_mode: "sfx"
 # ===============================
 # Simulation scale
 # ===============================
+hoa_order: 3
 mixtures_per_room: 10
 n_rooms: 1
 
