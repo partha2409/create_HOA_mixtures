@@ -55,7 +55,8 @@ def simulate_per_room(room_idx, rir_dir, out_dir, datasets, config):
             snr_min, snr_max = config.get("fg_to_diffuse_snr_db_range", [3, 20])
             snr_db = np.random.uniform(snr_min, snr_max)
 
-            # Scale diffuse relative to W-channel (ch 0)
+            # Scale diffuse relative to W-channel (ch 0)  
+            # all diffuse sounds (if we add 2 or more diffuse bg, default is 1) are scaled to same gain wrt fg events, but I think its fine. 
             fg_rms = np.sqrt(np.mean(hoa[0]**2))
             diff_rms = np.sqrt(np.mean(diffuse[0]**2))
             gain = fg_rms / (diff_rms + 1e-8) * 10**(-snr_db / 20)
