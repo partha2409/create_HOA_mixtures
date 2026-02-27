@@ -66,12 +66,14 @@ def render_mixture(rirs, room_meta, datasets, config):
             ) * config["fs"]
         )
 
-        seg = extract_non_silent_segment(
+        seg, start_sample = extract_non_silent_segment(
             x,
             dur,
             rms_thresh=config["rms_thresh"],
             max_tries=config["max_tries"],
         )
+        
+        end_sample = start_sample + len(seg)
 
         # -----------------------------
         # Temporal placement
@@ -118,6 +120,11 @@ def render_mixture(rirs, room_meta, datasets, config):
                 "doa_unit_vector": doa_vec,
                 "start_time_sec": start / config["fs"],
                 "end_time_sec": end / config["fs"],
+                
+                "audio_path": audio_path,
+                "src_audio_start_sample": start_sample ,
+                "src_audio_end_sample": end_sample,
+                "src_audio_total_duration_sec": len(seg) / config["fs"],
             }
         )
 
