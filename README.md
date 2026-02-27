@@ -1,4 +1,5 @@
 TODO:
+- parallelize the script to run simulations for each room in parallel.
 - <del>add support for difffuse background sources</del>
 - support various datasets (add classes in the dataset folder)
 - <del> also write to metadata start and end time of the sound event which was segmented from original audio (this can be helpful if we later do source separation) </del>
