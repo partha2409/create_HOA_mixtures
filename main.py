@@ -2,9 +2,11 @@ import os
 import yaml
 
 from datasets.freesound_dataset import FreesoundSFXDataset
-from datasets.speech_dataset import VctkSpeechDataset
+# from datasets.speech import SpeechDataset
 # from datasets.music import MusicDataset
+from datasets.background_dataset import BackgroundDataset
 from renderer.simulate_per_room import simulate_per_room
+
 
 
 def main(config):
@@ -22,11 +24,14 @@ def main(config):
         datasets["sfx"] = FreesoundSFXDataset(config["sfx_dir"])
     if mode in ["speech", "all"] and "speech_dir" in config:
         pass
-        datasets["speech"] = VctkSpeechDataset(config["speech_dir"])
+        #datasets["speech"] = SpeechDataset(config["speech_dir"])
     if mode in ["music", "all"] and "music_dir" in config:
         pass
         #datasets["music"] = MusicDataset(config["music_dir"])
 
+    if config['n_diffuse_sources'] > 0 and config.get("background_dir", None) is not None:
+        datasets["background"] = BackgroundDataset(config["background_dir"])
+    
     if len(datasets) == 0:
         raise RuntimeError("No datasets initialized. Check your config and dataset_mode.")
 
