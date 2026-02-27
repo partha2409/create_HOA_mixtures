@@ -23,19 +23,19 @@ def extract_non_silent_segment(x, seg_len, rms_thresh=1e-4, max_tries=2000):
     If x is shorter than seg_len, return the whole audio.
     
     Returns:
-        segment (numpy array)
+        segment (numpy array), start_index (int)
     """
     # If audio is shorter than desired segment, return whole audio
     if len(x) <= seg_len:
-        return x
+        return x, 0
 
     # Try to find a segment with RMS above threshold
     for _ in range(max_tries):
         s = random.randint(0, len(x) - seg_len)
         seg = x[s:s + seg_len]
         if np.sqrt(np.mean(seg**2)) > rms_thresh:
-            return seg
+            return seg, s
 
     # If no high-RMS segment found, just return a random segment anyway
     s = random.randint(0, len(x) - seg_len)
-    return x[s:s + seg_len]
+    return x[s:s + seg_len], s
