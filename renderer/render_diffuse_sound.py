@@ -41,11 +41,11 @@ def render_diffuse_sound(rirs, datasets, config):
     # Crop early part
     rir_late = np.zeros_like(rir_full)
     if mixing_samples < rir_len:
-        rir_late[:, :] = rir_full[:, mixing_samples:]
+        rir_late[:, mixing_samples:] = rir_full[:, mixing_samples:]
         late_reverb_only = True
     else:
         # RIR too short, keep all. This is a fallback to avoid empty RIRs, but may include some early reflections if the RIR is very short.
-        rir_late[:, :] = rir_full
+        rir_late[:, :] = rir_full.copy()
         late_reverb_only = False
 
     # --------------------------------------------------------
