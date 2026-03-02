@@ -19,10 +19,10 @@ class VctkSpeechDataset:
                 ...
 
     Sampling returns:
-        (audio_path, class_name)
+        (audio_path, speaker_id)
     """
 
-    def __init__(self, root_dir: str, exts=(".flac",)):
+    def __init__(self, root_dir: str, exts=("mic1.flac",)): # Only sample from mic1 by default
         self.root_dir = root_dir
         self.exts = exts
 
@@ -38,8 +38,8 @@ class VctkSpeechDataset:
             for fname in files:
                 if fname.lower().endswith(self.exts):
                     path = os.path.join(root, fname)
-                    class_name = os.path.basename(os.path.dirname(path))
-                    index.append((path, class_name))
+                    id = os.path.basename(os.path.dirname(path))
+                    index.append((path, id))
 
         return index
 
@@ -48,9 +48,20 @@ class VctkSpeechDataset:
         Sample a random Speech file.
 
         Returns:
-            (audio_path, class_name)
+            (audio_path, speaker_id)
         """
         return random.choice(self._index)
 
     def __len__(self):
         return len(self._index)
+
+if __name__ == "__main__":
+    # Point to a test directory with audio files
+    dataset = VctkSpeechDataset("F:/datasets/VCTK-Corpus-0.92")
+    
+    print(f"Dataset size: {len(dataset)}")
+    
+    # Sample a few files
+    for _ in range(3):
+        path, class_name = dataset.sample()
+        print(f"  {class_name}: {path}")
