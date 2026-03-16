@@ -1,11 +1,10 @@
 import os
-import random
-from typing import Tuple, List
+from datasets.base_dataset import Dataset
 
 
-class VctkSpeechDataset:
+class VctkSpeechDataset(Dataset):
     """
-    VCTK-Corpus-0.92-style SFX dataset.
+    VCTK-Corpus-0.92-style speech dataset.
 
     Expected layout:
         root/
@@ -18,42 +17,32 @@ class VctkSpeechDataset:
                     *_mic2.flac
                 ...
 
-    Sampling returns:
+    Sampling returns uniformly across speakers:
         (audio_path, speaker_id)
     """
 
-    def __init__(self, root_dir: str, exts=("mic1.flac",)): # Only sample from mic1 by default
-        self.root_dir = root_dir
-        self.exts = exts
-
-        self._index = self._build_index()
-
-        if len(self._index) == 0:
-            raise RuntimeError(f"No audio files found in {root_dir}")
-
-    def _build_index(self) -> List[Tuple[str, str]]:
-        index = []
-
-        for root, _, files in os.walk(self.root_dir):
-            for fname in files:
-                if fname.lower().endswith(self.exts):
-                    path = os.path.join(root, fname)
-                    id = os.path.basename(os.path.dirname(path))
-                    index.append((path, id))
-
-        return index
-
-    def sample(self) -> Tuple[str, str]:
+    def __init__(self, root_dir: str, exts=("mic1.flac",)):
         """
-        Sample a random Speech file.
+        Initialize speech dataset.
+
+        Args:
+            root_dir: Root directory of the dataset
+            exts: File extension to sample from (default: mic1.flac only)
+        """
+        super().__init__(root_dir, exts)
+
+    def _extract_metadata(self, path: str, fname: str) -> str:
+        """
+        Extract speaker ID from directory structure.
+
+        Args:
+            path: Full path to audio file
+            fname: Filename
 
         Returns:
-            (audio_path, speaker_id)
+            speaker_id (directory name containing the file)
         """
-        return random.choice(self._index)
-
-    def __len__(self):
-        return len(self._index)
+        return os.path.basename(os.path.dirname(path))
 
 if __name__ == "__main__":
     # Point to a test directory with audio files
