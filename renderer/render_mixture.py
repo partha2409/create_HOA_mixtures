@@ -47,7 +47,7 @@ def render_mixture(rirs, room_meta, datasets, config):
 
     events = []
 
-    dataset_keys = list(datasets.keys())
+    dataset_keys = [k for k in datasets.keys() if k != "background"]
 
     for src_idx in src_idxs:
         # -----------------------------
