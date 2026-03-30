@@ -24,14 +24,8 @@ def main(config):
         datasets["sfx"] = FreesoundSFXDataset(config["sfx_dir"])
     if mode in ["speech", "all"] and "speech_dir" in config:
         datasets["speech"] = VctkSpeechDataset(config["speech_dir"])
-        pass
-        #datasets["speech"] = SpeechDataset(config["speech_dir"])
     if mode in ["music", "all"] and "music_dir" in config:
         datasets["music"] = MusDBMusicDataset(config["music_dir"])
-
-        pass
-        #datasets["music"] = MusicDataset(config["music_dir"])
-
     if config['n_diffuse_sources'] > 0 and config.get("background_dir", None) is not None:
         datasets["background"] = BackgroundDataset(config["background_dir"])
     
@@ -43,7 +37,8 @@ def main(config):
 
     # Generate mixtures for all rooms
     for room_idx in range(config["n_rooms"]):
-        simulate_per_room(room_idx, config["rir_dir"], config["out_dir"], datasets, config)
+        if os.path.exists(os.path.join(config["out_dir"], "room_"+str(room_idx))) == False:
+            simulate_per_room(room_idx, config["rir_dir"], config["out_dir"], datasets, config)
 
 
 if __name__ == "__main__":

@@ -12,7 +12,7 @@ class Dataset(ABC):
     is extracted from file paths.
     """
 
-    def __init__(self, root_dir: str, exts: Tuple[str, ...] = (".wav",)):
+    def __init__(self, root_dir: str, exts: Tuple[str, ...] = (".wav",".flac")):
         """
         Initialize dataset.
 

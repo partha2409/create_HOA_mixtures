@@ -8,9 +8,7 @@ class BackgroundDataset(Dataset):
 
     Expected layout:
         root/
-            class_1/
                 *.wav
-            class_2/
                 *.wav
 
     Sampling returns uniformly across classes:
@@ -28,4 +26,4 @@ class BackgroundDataset(Dataset):
         Returns:
             class_name (directory name containing the file)
         """
-        return os.path.basename(os.path.dirname(path))
+        return fname
