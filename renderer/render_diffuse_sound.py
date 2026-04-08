@@ -1,7 +1,7 @@
 import numpy as np
 import soundfile as sf
 from scipy.signal import fftconvolve
-from utils.audio_utils import load_audio
+from utils.audio_utils import load_background_segment
 
 
 def render_diffuse_sound(rirs, datasets, config):
@@ -55,7 +55,10 @@ def render_diffuse_sound(rirs, datasets, config):
 
         # Sample mono background clip
         bg_path, _ = bg_dataset.sample()
-        clip = load_audio(bg_path, target_fs=fs)
+        clip = load_background_segment(bg_path, scene_len, target_fs=fs)
+
+        if clip is None:
+            continue  # Skip if loading failed
 
         if clip.ndim > 1:
             clip = clip.mean(axis=1)
