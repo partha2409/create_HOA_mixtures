@@ -2,7 +2,7 @@ import os
 import random
 import numpy as np
 from scipy.signal import fftconvolve
-from utils.audio_utils import load_audio, extract_non_silent_segment
+from utils.audio_utils import load_audio, load_audio_segment, extract_non_silent_segment
 from utils.geometry_utils import cartesian_to_az_el_dist, doa_unit_vector
 from renderer.source_indices_selection import sample_spatial_sources
 from renderer.overlap_events import can_place, mark_timeline
@@ -57,8 +57,6 @@ def render_mixture(rirs, room_meta, datasets, config):
         dataset = datasets[dataset_name]
         audio_path, audio_event = dataset.sample()
 
-        x = load_audio(audio_path, target_fs=config["fs"])
-
         dur = int(
             random.uniform(
                 config["min_event_dur_sec"],
@@ -66,12 +64,26 @@ def render_mixture(rirs, room_meta, datasets, config):
             ) * config["fs"]
         )
 
-        seg, start_sample = extract_non_silent_segment(
-            x,
+        seg, start_sample = load_audio_segment(
+            audio_path,
             dur,
+            target_fs=config["fs"],
             rms_thresh=config["rms_thresh"],
             max_tries=config["max_tries"],
         )
+        
+        if seg is None:
+            # Fallback: load entire file and extract segment
+            x = load_audio(audio_path, target_fs=config["fs"])
+            if x is not None:
+                seg, start_sample = extract_non_silent_segment(
+                    x,
+                    dur,
+                    rms_thresh=config["rms_thresh"],
+                    max_tries=config["max_tries"],
+                )
+            else:
+                continue  # Skip this source if loading fails
         
         end_sample = start_sample + len(seg)
 
