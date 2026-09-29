@@ -28,22 +28,14 @@ def render_mixture(rirs, room_meta, datasets, config):
     n_ch = rirs.shape[1]
     rir_len = rirs.shape[2]
 
-    hoa = np.zeros(
-        (n_ch, config["scene_len"] + rir_len - 1),
-        dtype=np.float32,
-    )
+    hoa = np.zeros((n_ch, config["scene_len"] + rir_len - 1), dtype=np.float32)
     timeline = np.zeros(config["scene_len"], dtype=np.int32)
 
     # Number of sources
     K = random.randint(config["min_sources"], config["max_sources"])
     print(f"Placing {K} sources")
 
-    src_idxs = sample_spatial_sources(
-        src_positions,
-        mic_pos,
-        K,
-        config["min_angular_sep_deg"],
-    )
+    src_idxs = sample_spatial_sources(src_positions, mic_pos, K, config["min_angular_sep_deg"])
 
     events = []
 
@@ -57,33 +49,12 @@ def render_mixture(rirs, room_meta, datasets, config):
         dataset = datasets[dataset_name]
         audio_path, audio_event = dataset.sample()
 
-        dur = int(
-            random.uniform(
-                config["min_event_dur_sec"],
-                config["max_event_dur_sec"],
-            ) * config["fs"]
-        )
+        dur = int(random.uniform(config["min_event_dur_sec"], config["max_event_dur_sec"]) * config["fs"])
 
-        seg, start_sample = load_audio_segment(
-            audio_path,
-            dur,
-            target_fs=config["fs"],
-            rms_thresh=config["rms_thresh"],
-            max_tries=config["max_tries"],
-        )
-        
+        seg, start_sample = load_audio_segment(audio_path, dur, target_fs=config["fs"], rms_thresh=config["rms_thresh"], max_tries=config["max_tries"])
+
         if seg is None:
-            # Fallback: load entire file and extract segment
-            x = load_audio(audio_path, target_fs=config["fs"])
-            if x is not None:
-                seg, start_sample = extract_non_silent_segment(
-                    x,
-                    dur,
-                    rms_thresh=config["rms_thresh"],
-                    max_tries=config["max_tries"],
-                )
-            else:
-                continue  # Skip this source if loading fails
+            continue  # Skip this source if loading fails
         
         end_sample = start_sample + len(seg)
 
@@ -108,16 +79,12 @@ def render_mixture(rirs, room_meta, datasets, config):
         # Convolution
         # -----------------------------
         for ch in range(n_ch):
-            hoa[ch, start : start + len(seg) + rir_len - 1] += fftconvolve(
-                seg, rirs[src_idx, ch], mode="full"
-            )
+            hoa[ch, start : start + len(seg) + rir_len - 1] += fftconvolve(seg, rirs[src_idx, ch], mode="full")
 
         # -----------------------------
         # Metadata
         # -----------------------------
-        az, el, dist = cartesian_to_az_el_dist(
-            src_positions[src_idx], mic_pos
-        )
+        az, el, dist = cartesian_to_az_el_dist(src_positions[src_idx], mic_pos)
         doa_vec = doa_unit_vector(src_positions[src_idx], mic_pos)
 
         events.append(

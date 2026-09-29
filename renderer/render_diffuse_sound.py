@@ -60,9 +60,6 @@ def render_diffuse_sound(rirs, datasets, config):
         if clip is None:
             continue  # Skip if loading failed
 
-        if clip.ndim > 1:
-            clip = clip.mean(axis=1)
-
         if len(clip) >= scene_len:
             clip = clip[:scene_len]
         else:
