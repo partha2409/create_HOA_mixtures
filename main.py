@@ -1,9 +1,11 @@
 import os
 import yaml
 
-from datasets.freesound_dataset import FreesoundSFXDataset
+
 from datasets.speech_dataset import VctkSpeechDataset
 from datasets.music_dataset import MusDBMusicDataset
+from datasets.general_sounds_dataset import NigensDataset, FSD50KFMADataset, FreesoundDataset
+
 from datasets.background_dataset import BackgroundDataset
 from renderer.simulate_per_room import simulate_per_room
 
@@ -16,16 +18,26 @@ def main(config):
     Args:
         config: dict loaded from YAML
     """
+    
     # Prepare datasets dict
     datasets = {}
-    mode = config.get("dataset_mode", "all").lower()
+    modes = [m.lower() for m in config.get("dataset_mode", ["speech", "music", "fsd50k_fma"])]
 
-    if mode in ["sfx", "all"] and "sfx_dir" in config:
-        datasets["sfx"] = FreesoundSFXDataset(config["sfx_dir"])
-    if mode in ["speech", "all"] and "speech_dir" in config:
-        datasets["speech"] = VctkSpeechDataset(config["speech_dir"])
-    if mode in ["music", "all"] and "music_dir" in config:
+    if "fsd50k_fma" in modes and "fsd50k_fma_dir" in config:
+        datasets["fsd50k_fma"] = FSD50KFMADataset(config["fsd50k_fma_dir"], split=config.get("split"), exclude_classes=config.get("fsd50k_fma_exclude_classes", []))
+
+    if "vctk" in modes and "vctk_dir" in config:
+        datasets["vctk"] = VctkSpeechDataset(config["vctk_dir"])
+
+    if "music" in modes and "music_dir" in config:
         datasets["music"] = MusDBMusicDataset(config["music_dir"])
+
+    if "nigens" in modes and "nigens_dir" in config:
+        datasets["nigens"] = NigensDataset(config["nigens_dir"], split=config.get("split"), exclude_classes=config.get("nigens_exclude_classes", []))
+
+    if "freesound" in modes and "freesound_dir" in config:
+        datasets["freesound"] = FreesoundDataset(config["freesound_dir"])
+
     if config['n_diffuse_sources'] > 0 and config.get("background_dir", None) is not None:
         datasets["background"] = BackgroundDataset(config["background_dir"])
     
