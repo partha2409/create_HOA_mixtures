@@ -46,7 +46,7 @@ class VctkSpeechDataset(Dataset):
 
 if __name__ == "__main__":
     # Point to a test directory with audio files
-    dataset = VctkSpeechDataset("F:/datasets/VCTK-Corpus-0.92")
+    dataset = VctkSpeechDataset("/media/partha/LaCie/datasets/VCTK_corpus-0.92_splits/train/flac")
     
     print(f"Dataset size: {len(dataset)}")
     

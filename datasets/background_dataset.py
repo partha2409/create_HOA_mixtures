@@ -11,8 +11,6 @@ class BackgroundDataset(Dataset):
                 *.wav
                 *.wav
 
-    Sampling returns uniformly across classes:
-        (audio_path, class_name)
     """
 
     def _extract_metadata(self, path: str, fname: str) -> str:

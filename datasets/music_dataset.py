@@ -27,6 +27,8 @@ class MusDBMusicDataset(Dataset):
     Sampling returns uniformly across instrument types:
         (audio_path, class_name)
     """
+    def __init__(self, root_dir: str, exts=(".wav",)):
+        super().__init__(root_dir, exts)
 
     def _extract_metadata(self, path: str, fname: str) -> str:
         """
